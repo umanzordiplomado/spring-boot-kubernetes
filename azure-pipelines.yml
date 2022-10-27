@@ -19,9 +19,13 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-- task: sonarCloud
+- task: SonarCloudAnalyze@1
+  displayName: Sonar
   inputs:
     SonarCloud: 'umanzordiplomado'
     organization: 'umanzordiplomado'
     projectKey: 'umanzordiplomado'
     projectName: 'diplomado'
+
+
+
