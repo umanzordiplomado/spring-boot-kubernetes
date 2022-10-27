@@ -8,8 +8,8 @@ trigger:
 
 #pool:
 #  vmImage: ubuntu-latest
-pool: default
-
+pool: 
+  vmImage: maven:3-jdk-11
 steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
