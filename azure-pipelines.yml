@@ -1,51 +1,73 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- master
-
-#pool:
-#  vmImage: ubuntu-latest
 pool: default
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: SAST 
+  jobs:
+  - job: SAST
+    displayName: 'SAST'
+    steps:
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '*/surefire-reports/TEST-.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false   
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'sonarumanzor'
-    organization: 'umanzordiplomado'
-    scannerMode: 'Other'
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'sonarumanzor'
+        organization: 'umanzordiplomado'
+        projectKey: 'umanzordiplomado_spring-boot-kubernetes'
+        projectName: 'diplomado'
+    
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '*/surefire-reports/TEST-.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        sonarQubeRunAnalysis: true
+- stage: SCA 
+  jobs:
+  - job: SCA
+    displayName: 'SCA'
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '*/surefire-reports/TEST-.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
 
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: true
-    sqMavenPluginVersionChoice: 'latest'
-
-- task: SonarCloudAnalyze@1
-  displayName: Sonar
-  inputs:
-    SonarCloud: 'umanzordiplomado'
-    organization: 'umanzordiplomado'
-    projectKey: 'umanzordiplomado'
-    projectName: 'diplomado'
-
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '60'
-
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'spring-boot-kubernetes'
+        scanPath: '$(Build.ArtifactStagingDirectory)'
+        format: 'HTML'
+      
+- stage: ContainerSecurity 
+  jobs:
+  - job: ContainerSecurity
+    displayName: 'ContainerSecurity'
+    steps:
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '*/surefire-reports/TEST-.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    
