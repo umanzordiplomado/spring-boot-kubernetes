@@ -22,7 +22,7 @@ stages:
       inputs:
         SonarCloud: 'sonarumanzor'
         organization: 'umanzordiplomado'
-        projectKey: 'umanzordiplomado_spring-boot-kubernetes'
+        projectKey: 'umanzordiplomado'
         projectName: 'diplomado'
     
     - task: Maven@4
@@ -33,6 +33,7 @@ stages:
         javaHomeOption: 'JDKVersion'
         mavenVersionOption: 'Default'
         sonarQubeRunAnalysis: true
+        
 - stage: SCA 
   jobs:
   - job: SCA
