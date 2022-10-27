@@ -33,5 +33,7 @@ steps:
     projectKey: 'umanzordiplomado'
     projectName: 'diplomado'
 
-
+- task: SonarCloudPublish@1
+  inputs:
+    pollingTimeoutSec: '60'
 
