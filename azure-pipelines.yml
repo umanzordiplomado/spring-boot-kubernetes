@@ -109,9 +109,9 @@ stages:
 
     - task: Docker@2
       inputs:
-        containerRegistry: 'Docker'
+        containerRegistry: 'docker'
         repository: 'umanzordiplomado/umanzor'
-        command: 'build'
+        command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: 'latest'
 
@@ -121,3 +121,4 @@ stages:
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
         trivy image umanzordiplomado/umanzor:latest
       displayName: Image Scan
+
