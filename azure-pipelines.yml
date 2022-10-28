@@ -23,6 +23,8 @@ steps:
   inputs:
     SonarCloud: 'sonarumanzor'
     organization: 'umanzordiplomado'
+    projectKey: 'umanzordiplomado'
+    projectName: 'diplomado'
     scannerMode: 'Other'
 
 - task: Maven@3
