@@ -35,10 +35,9 @@ steps:
 
 - task: SonarCloudPrepare@1
   inputs:
-    SonarCloud: 'umanzordiplomado'
+    SonarCloud: 'sonarumanzor'
     organization: 'umanzordiplomado'
-    projectKey: 'umanzordiplomado'
-    projectName: 'diplomado'
+    scannerMode: 'Other'
 
 - task: SonarCloudPublish@1
   inputs:
