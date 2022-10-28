@@ -23,22 +23,21 @@ steps:
   inputs:
     SonarCloud: 'sonarumanzor'
     organization: 'umanzordiplomado'
-    projectKey: 'umanzordiplomado'
-    projectName: 'diplomado'
     scannerMode: 'Other'
+    extraProperties: |
+        sonar.projectKey=umanzordiplomado
+        sonar.projectName=umanzordiplomado
 
-- task: Maven@3
+- task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    codeCoverageToolOption: 'JaCoCo'
+    publishJUnitResults: false
     javaHomeOption: 'JDKVersion'
     mavenVersionOption: 'Default'
+    goals: clean package -DskipTests
     mavenAuthenticateFeed: false
     effectivePomSkip: false
     sonarQubeRunAnalysis: true
-    isJacocoCoverageReportXML: true
     sqMavenPluginVersionChoice: 'latest'
 
 
