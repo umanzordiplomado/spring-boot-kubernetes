@@ -19,13 +19,6 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'umanzordiplomado'
-    organization: 'umanzordiplomado'
-    projectKey: 'umanzordiplomado'
-    projectName: 'diplomado'
-
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
@@ -39,6 +32,13 @@ steps:
     sonarQubeRunAnalysis: true
     isJacocoCoverageReportXML: true
     sqMavenPluginVersionChoice: 'latest'
+
+- task: SonarCloudPrepare@1
+  inputs:
+    SonarCloud: 'umanzordiplomado'
+    organization: 'umanzordiplomado'
+    projectKey: 'umanzordiplomado'
+    projectName: 'diplomado'
 
 - task: SonarCloudPublish@1
   inputs:
