@@ -80,3 +80,44 @@ stages:
         reportsDirectory: '$(Build.SourcesDirectory)/dependency'
       
 ################################################################
+- stage: ContainerSecurity 
+  jobs:
+  - job: ContainerSecurity
+    displayName: 'Analisis de Container'
+    steps:
+   
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+
+
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'Docker'
+        command: 'login'
+
+    - task: Docker@2
+      inputs:
+        containerRegistry: 'Docker'
+        repository: 'umanzordiplomado/umanzor'
+        command: 'build'
+        Dockerfile: '**/Dockerfile'
+        tags: 'latest'
+
+    - script: |
+        sudo apt-get install -y rpm
+        wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
+        sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
+        trivy image umanzordiplomado/umanzor:latest
+      displayName: Image Scan
