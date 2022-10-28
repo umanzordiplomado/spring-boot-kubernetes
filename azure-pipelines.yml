@@ -14,6 +14,7 @@ stages:
     displayName: 'Analisis Estatico'
     steps:
     - task: Maven@4
+      displayName: 'Maven No sonar'
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: false
