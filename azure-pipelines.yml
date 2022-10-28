@@ -6,56 +6,77 @@
 trigger:
 - master
 
-#pool:
-#  vmImage: ubuntu-latest
 pool: default
+stages:
+- stage: SAST 
+  jobs:
+  - job: SAST
+    displayName: 'Analisis Estatico'
+    steps:
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+        sqMavenPluginVersionChoice: 'latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'sonarumanzor'
+        organization: 'umanzordiplomado'
+        scannerMode: 'Other'
+        extraProperties: |
+            sonar.projectKey=umanzordiplomado
+            sonar.projectName=umanzordiplomado
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: false
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        goals: clean package -DskipTests
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: true
+        sqMavenPluginVersionChoice: 'latest'
 
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    publishJUnitResults: false
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: false
-    sqMavenPluginVersionChoice: 'latest'
+    - task: sonarcloud-buildbreaker@2
+      inputs:
+        SonarCloud: 'sonarumanzor'
+        organization: 'umanzordiplomado'
 
-- task: SonarCloudPrepare@1
-  inputs:
-    SonarCloud: 'sonarumanzor'
-    organization: 'umanzordiplomado'
-    scannerMode: 'Other'
-    extraProperties: |
-        sonar.projectKey=umanzordiplomado
-        sonar.projectName=umanzordiplomado
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '60'
 
-- task: Maven@4
-  inputs:
-    mavenPomFile: 'pom.xml'
-    publishJUnitResults: false
-    javaHomeOption: 'JDKVersion'
-    mavenVersionOption: 'Default'
-    goals: clean package -DskipTests
-    mavenAuthenticateFeed: false
-    effectivePomSkip: false
-    sonarQubeRunAnalysis: true
-    sqMavenPluginVersionChoice: 'latest'
+############################################################
+- stage: SCA 
+  jobs:
+  - job: SCA
+    displayName: 'Analisis SCA'
+    steps:
 
-- task: sonarcloud-buildbreaker@2
-  inputs:
-    SonarCloud: 'sonarumanzor'
-    organization: 'umanzordiplomado'
-
-- task: SonarCloudPublish@1
-  inputs:
-    pollingTimeoutSec: '60'
+    - task: Maven@4
+      inputs:
+        mavenPomFile: 'pom.xml'
+        publishJUnitResults: true
+        testResultsFiles: '**/surefire-reports/TEST-*.xml'
+        javaHomeOption: 'JDKVersion'
+        mavenVersionOption: 'Default'
+        mavenAuthenticateFeed: false
+        effectivePomSkip: false
+        sonarQubeRunAnalysis: false
+    - script: find $(Build.SourcesDirectory) -name "*.jar"
+    - task: dependency-check-build-task@6
+      inputs:
+        projectName: 'scan-librerias'
+        scanPath: '$(Build.SourcesDirectory)/target'
+        format: 'ALL'
+        reportsDirectory: '$(Build.SourcesDirectory)/dependency'
+      
+################################################################
