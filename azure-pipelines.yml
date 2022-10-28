@@ -21,9 +21,10 @@ steps:
 
 - task: SonarCloudPrepare@1
   inputs:
-    SonarCloud: 'sonarumanzor'
+    SonarCloud: 'umanzordiplomado'
     organization: 'umanzordiplomado'
-    scannerMode: 'Other'
+    projectKey: 'umanzordiplomado'
+    projectName: 'diplomado'
 
 - task: Maven@3
   inputs:
@@ -31,7 +32,7 @@ steps:
     goals: 'clean verify sonar:sonar'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    codeCoverageToolOption: 'umanzordiplomado'
+    codeCoverageToolOption: 'JaCoCo'
     javaHomeOption: 'JDKVersion'
     jdkVersionOption: default
     mavenVersionOption: 'Default'
@@ -39,14 +40,6 @@ steps:
     effectivePomSkip: false
     sonarQubeRunAnalysis: true
     sqMavenPluginVersionChoice: 'latest'
-
-- task: SonarCloudAnalyze@1
-  displayName: Sonar
-  inputs:
-    SonarCloud: 'umanzordiplomado'
-    organization: 'umanzordiplomado'
-    projectKey: 'umanzordiplomado'
-    projectName: 'diplomado'
 
 - task: SonarCloudPublish@1
   inputs:
