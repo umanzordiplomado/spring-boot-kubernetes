@@ -19,6 +19,17 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    publishJUnitResults: false
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+    sqMavenPluginVersionChoice: 'latest'
+
 - task: SonarCloudPrepare@1
   inputs:
     SonarCloud: 'sonarumanzor'
@@ -40,6 +51,10 @@ steps:
     sonarQubeRunAnalysis: true
     sqMavenPluginVersionChoice: 'latest'
 
+- task: sonarcloud-buildbreaker@2
+  inputs:
+    SonarCloud: 'sonarumanzor'
+    organization: 'umanzordiplomado'
 
 - task: SonarCloudPublish@1
   inputs:
