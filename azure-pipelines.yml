@@ -26,6 +26,7 @@ stages:
         sqMavenPluginVersionChoice: 'latest'
 
     - task: SonarCloudPrepare@1
+      displayName: 'Parametros SonarCloud'
       inputs:
         SonarCloud: 'sonarumanzor'
         organization: 'umanzordiplomado'
@@ -35,6 +36,7 @@ stages:
             sonar.projectName=umanzordiplomado
 
     - task: Maven@4
+      displayName: 'Maven Sonar'
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: false
@@ -47,11 +49,13 @@ stages:
         sqMavenPluginVersionChoice: 'latest'
 
     - task: sonarcloud-buildbreaker@2
+      displayName: 'Sonar Cloud BuildBreaker'
       inputs:
         SonarCloud: 'sonarumanzor'
         organization: 'umanzordiplomado'
 
     - task: SonarCloudPublish@1
+      displayName: 'Publicacion SonarCloud'
       inputs:
         pollingTimeoutSec: '60'
 
@@ -63,6 +67,7 @@ stages:
     steps:
 
     - task: Maven@4
+      displayName: 'Verificacion Maven'
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
@@ -74,6 +79,7 @@ stages:
         sonarQubeRunAnalysis: false
     - script: find $(Build.SourcesDirectory) -name "*.jar"
     - task: dependency-check-build-task@6
+      displayName: 'Analisis de dependencias'
       inputs:
         projectName: 'scan-librerias'
         scanPath: '$(Build.SourcesDirectory)/target'
@@ -88,6 +94,7 @@ stages:
     steps:
    
     - task: Maven@4
+      displayName: 'Verificacion Codigo Maven'
       inputs:
         mavenPomFile: 'pom.xml'
         publishJUnitResults: true
@@ -100,15 +107,18 @@ stages:
 
 
     - task: DockerInstaller@0
+      displayName: 'Install Docker'
       inputs:
         dockerVersion: '17.09.0-ce'
 
     - task: Docker@2
+      displayName: 'Login Docker'
       inputs:
         containerRegistry: 'Docker'
         command: 'login'
 
     - task: Docker@2
+      displayName: 'Subida de imagen docker y validacion via trivy'
       inputs:
         containerRegistry: 'docker'
         repository: 'umanzordiplomado/umanzor'
