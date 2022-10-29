@@ -133,13 +133,6 @@ stages:
         trivy image umanzordiplomado/umanzor:latest
       displayName: Image Scan
 
-    - task: CmdLine@2
-      displayName: Scan
-      inputs:
-        script: |
-          docker run -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app --rm aquasec/trivy image --severity HIGH,CRITICAL --no-progress --format template --template "@contrib/junit.tpl" -o /app/junit-report.xml ${IMAGE}
-          sudo cp junit-report.xml $(Build.ArtifactStagingDirectory)/junit-report.xml
-
     - task: PublishBuildArtifacts@1
       inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
