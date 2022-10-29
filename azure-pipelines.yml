@@ -138,7 +138,7 @@ stages:
       inputs:
         script: |
           docker run -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/app --rm aquasec/trivy image --severity HIGH,CRITICAL --no-progress --format template --template "@contrib/junit.tpl" -o /app/junit-report.xml ${IMAGE}
-          cp junit-report.xml $(Build.ArtifactStagingDirectory)/junit-report.xml
+          sudo cp junit-report.xml $(Build.ArtifactStagingDirectory)/junit-report.xml
 
     - task: PublishBuildArtifacts@1
       inputs:
