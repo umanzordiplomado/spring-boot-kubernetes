@@ -130,7 +130,7 @@ stages:
         sudo apt-get install -y rpm
         wget https://github.com/aquasecurity/trivy/releases/download/v0.27.1/trivy_0.27.1_Linux-64bit.deb
         sudo dpkg -i trivy_0.27.1_Linux-64bit.deb
-        trivy image --severity HIGH,CRITICAL --no-progress --format template --template "@contrib/junit.tpl" -o /home/curso/junit-report.xml umanzordiplomado/umanzor:latest
+        trivy image --severity HIGH,CRITICAL --no-progress --format template --template "/home/curso/junit.tpl" -o /home/curso/junit-report.xml umanzordiplomado/umanzor:latest
       displayName: Image Scan
 
 
